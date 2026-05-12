@@ -1,0 +1,11 @@
+{
+	"mcpServers": {
+		"yandex-wiki": {
+			"command": "npx",
+			"args": ["-y", "yandex-wiki-mcp"],
+			"env": {
+				"YANDEX_CLOUD_ORG_ID": "bpff72khspjh163qm0qg"
+			}
+		}
+	}
+}

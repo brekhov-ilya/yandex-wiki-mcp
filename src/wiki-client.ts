@@ -117,6 +117,11 @@ export class WikiClient {
     slug: string,
     opts: DescendantsQuery = {},
   ): Promise<WikiDescendantsResponse> {
+    if (!slug || !slug.trim()) {
+      throw new Error(
+        "getDescendantsBySlug: 'slug' must be non-empty. Wiki API rejects empty slug with FORCED_SYNC_REQUIRED.",
+      );
+    }
     const query = buildQuery({ slug, ...opts });
     return this.request<WikiDescendantsResponse>(
       "GET",

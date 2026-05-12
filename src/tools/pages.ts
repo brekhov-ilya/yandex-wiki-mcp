@@ -27,6 +27,9 @@ export function registerPageTools(
   const parentDefaultNote = defaultParentSlug
     ? ` Default parent slug is "${defaultParentSlug}" — when the user does not name a parent, OMIT this field and the server will use the default.`
     : "";
+  const descendantsDefaultNote = defaultParentSlug
+    ? ` If slug is omitted, defaults to "${defaultParentSlug}".`
+    : " The slug is required — Wiki API rejects requests without a parent (returns FORCED_SYNC_REQUIRED / collab_id=None). Use the slug of a real root page (e.g. 'homepage').";
 
   server.registerTool(
     "get_page",
@@ -69,11 +72,17 @@ export function registerPageTools(
     "get_descendants",
     {
       description:
-        "List direct child pages by parent slug. Pass empty slug for root pages. Use cursor for pagination.",
+        "List direct child pages by parent slug. Use cursor for pagination." +
+        descendantsDefaultNote,
       inputSchema: z.object({
         slug: z
           .string()
-          .describe("Parent slug. Use empty string '' to list root pages."),
+          .optional()
+          .describe(
+            defaultParentSlug
+              ? `Parent slug. Optional — defaults to "${defaultParentSlug}".`
+              : "Parent slug (required). Empty slug is rejected by Wiki API.",
+          ),
         cursor: z
           .string()
           .optional()
@@ -89,7 +98,13 @@ export function registerPageTools(
       }),
     },
     async ({ slug, cursor, pageSize, q }) => {
-      const result = await client.getDescendantsBySlug(slug, {
+      const effectiveSlug = slug?.trim() || defaultParentSlug;
+      if (!effectiveSlug) {
+        throw new Error(
+          "get_descendants requires a non-empty 'slug'. Wiki API rejects requests without a parent slug (responds with FORCED_SYNC_REQUIRED / collab_id=None). Pass a real parent slug (e.g. 'homepage') or set WIKI_DEFAULT_PARENT_SLUG.",
+        );
+      }
+      const result = await client.getDescendantsBySlug(effectiveSlug, {
         cursor,
         page_size: pageSize,
         q,

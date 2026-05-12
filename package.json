@@ -1,7 +1,7 @@
 {
   "name": "yandex-wiki-mcp",
   "author": "Brekhov Ilya",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "MCP server for Yandex Wiki API — read, create and edit wiki pages",
   "main": "dist/index.js",
   "bin": {
