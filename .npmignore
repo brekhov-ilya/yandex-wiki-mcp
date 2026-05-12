@@ -1,0 +1,21 @@
+# Sources (only dist/ ships)
+src/
+tsconfig.json
+
+# Dev / repo metadata
+.gitignore
+.npmignore
+.idea/
+.vscode/
+.DS_Store
+
+# Internal
+tasks/
+.claude/
+
+# Package manager artifacts
+yarn.lock
+package-lock.json
+pnpm-lock.yaml
+*.tgz
+*.log
